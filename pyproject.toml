@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crossbar-imc-analysis"
+version = "0.1.0"
+description = "Behavioral compute-SNR analysis for voltage-driven resistive crossbar IMCs"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  {name = "Saion K. Roy"},
+  {name = "Ameya Patil"},
+  {name = "Naresh R. Shanbhag"},
+]
+dependencies = ["numpy>=1.23"]
+keywords = ["in-memory computing", "crossbar", "eNVM", "SNR"]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.7"]
+
+[project.scripts]
+crossbar-sweep = "crossbar_analysis.cli:main"
+
+[project.urls]
+Homepage = "https://calmyor.github.io/Crossbar-analysis/"
+Repository = "https://github.com/calmyor/Crossbar-analysis"
+Paper = "https://doi.org/10.1109/ISCAS48785.2022.9937336"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

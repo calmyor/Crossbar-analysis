@@ -1,0 +1,18 @@
+{
+  "dot_product_dimension": 512,
+  "physical_columns": 1024,
+  "input_bits": 5,
+  "adc_bits": 6,
+  "v_lsb_volt": 0.003,
+  "adc_clip_ampere": 0.000002,
+  "dac_mismatch_ratio": 0.04,
+  "conductance_variation_ratio": 0.04,
+  "behavioral_samples": 10000,
+  "spice_samples": 1000,
+  "seed": 2021,
+  "devices": {
+    "mram": {"ron_ohm": 3000.0, "roff_ohm": 6000.0},
+    "reram": {"ron_ohm": 25000.0, "roff_ohm": 300000.0},
+    "fefet": {"ron_ohm": 1000000.0, "roff_ohm": 1000000000.0}
+  }
+}

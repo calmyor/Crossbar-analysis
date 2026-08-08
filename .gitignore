@@ -1,0 +1,24 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+outputs/
+
+# The original working archive remains local. It contains draft papers,
+# third-party PDFs, checkpoints, and intermediate tensors larger than 100 MB.
+/Conference-LaTeX-template_10-17-19/
+/ISCAS-2022/
+/Python Model/
+/crossbar-website/
+
+# Generated or heavyweight research intermediates should not enter Git.
+*.pt
+*.pth
+*.pth.tar
+*.npy
+*.npz
+*.zip
+*.pptx

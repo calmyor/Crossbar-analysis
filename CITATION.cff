@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated ISCAS 2022 paper."
+title: "Crossbar IMC accuracy analysis"
+type: software
+authors:
+  - family-names: Roy
+    given-names: Saion K.
+  - family-names: Patil
+    given-names: Ameya
+  - family-names: Shanbhag
+    given-names: Naresh R.
+repository-code: "https://github.com/calmyor/Crossbar-analysis"
+url: "https://calmyor.github.io/Crossbar-analysis/"
+preferred-citation:
+  type: conference-paper
+  title: "Fundamental Limits on the Computational Accuracy of Resistive Crossbar-based In-memory Architectures"
+  authors:
+    - family-names: Roy
+      given-names: Saion K.
+    - family-names: Patil
+      given-names: Ameya
+    - family-names: Shanbhag
+      given-names: Naresh R.
+  collection-title: "2022 IEEE International Symposium on Circuits and Systems (ISCAS)"
+  year: 2022
+  start: 384
+  end: 388
+  doi: "10.1109/ISCAS48785.2022.9937336"
+  publisher:
+    name: IEEE

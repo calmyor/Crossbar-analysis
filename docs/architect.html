@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Map a large dot product across resistive crossbar banks using the device-specific sensing coordinates reported in the ISCAS 2022 analysis." />
+    <link rel="icon" href="assets/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+    <title>Multi-bank Architect · Crossbar IMC</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="site-nav" aria-label="Crossbar study"><a href="index.html">Overview</a><a href="architect.html" aria-current="page">Architect</a><a href="architecture.html">Architecture</a><a href="optimum.html">SNR optimum</a><a href="evidence.html">Accuracy evidence</a><a href="paper.html">Paper</a><a class="nav-repository" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></nav><a class="header-repo" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></div></header>
+
+    <main id="main">
+      <section class="page-hero architect-hero crossbar-architect-hero">
+        <div class="container page-hero-grid">
+          <div><p class="eyebrow red">System explorer · Crossbar fabric</p><h1>Build a multi-bank crossbar IMC. <span class="accent-red">Keep the local optimum visible.</span></h1><p class="hero-summary">Choose an evaluated device and local dot-product length, then partition a larger workload across banks while preserving the paper’s device-specific SNR-selected sensing coordinate.</p><div class="hero-actions"><a class="button button-red" href="#crossbar-architect-lab">Configure the crossbar</a><a class="button button-secondary" href="https://github.com/calmyor/Crossbar-analysis#quick-start">Run the model ↗</a></div></div>
+          <aside class="chip-preview crossbar-chip-preview" aria-label="A four-stage crossbar pipeline feeding a multi-bank eNVM compute fabric"><div class="chip-preview-head"><span>Crossbar fabric</span><strong>Shared-row current pipeline</strong></div><ol class="pipeline-strip" aria-label="Pipeline stages"><li>Input DACs</li><li>Crossbar MVM</li><li>TIA + ADC</li><li>Digital reduce</li></ol><div class="hero-bank-grid crossbar-hero-bank-grid" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><p>Hold the local analog dimension near its useful SNR point, then add banks to map the full workload.</p></aside>
+        </div>
+      </section>
+
+      <section class="section section-tint" id="crossbar-architect-lab">
+        <div class="container"><div class="section-heading"><p class="section-kicker red">Interactive crossbar map</p><h2>Preserve the evaluated bank point. Scale capacity separately.</h2><p>The sensing values below are the device- and layer-specific SNR-selected coordinates reported for the paper’s ResNet-20 mapping. The multi-bank scheduling view is an architectural illustration.</p></div>
+          <div class="architect-lab">
+            <form class="architect-controls crossbar-controls" id="crossbar-architect-form">
+              <fieldset><legend>Crossbar bank and workload</legend><label class="control-field" for="xsim-device"><span>eNVM device</span><select id="xsim-device" name="device"><option value="reram" selected>ReRAM · contrast 12</option><option value="mram">MRAM · contrast 2</option><option value="fefet">FeFET · contrast 1,000</option></select></label><label class="control-field" for="xsim-workload"><span>Workload dot-product dimension</span><select id="xsim-workload" name="workload"><option value="144">144 terms</option><option value="288">288 terms</option><option value="576" selected>576 terms · ResNet block 3</option><option value="1024">1,024 terms · larger workload</option><option value="4096">4,096 terms · larger workload</option></select></label><label class="control-field" for="xsim-bank-n"><span>Local logical dimension N</span><select id="xsim-bank-n" name="bankN"><option value="144">144 · 288 physical columns</option><option value="288" selected>288 · 576 physical columns</option><option value="576">576 · 1,152 physical columns</option></select></label><label class="control-field range-field" for="xsim-banks"><span>Available crossbar banks <output id="xsim-banks-value" for="xsim-banks">8</output></span><input id="xsim-banks" name="banks" type="range" min="1" max="64" step="1" value="8" /></label></fieldset>
+
+              <fieldset><legend>Paper evaluation boundary</legend><p class="control-note">Each logical N-term dot product uses 2N physical columns. The reported mapping uses signed 5-bit inputs, ternary weights, a ±2 µA ADC range, and 4% DAC-mismatch and bitcell-variation parameters.</p></fieldset>
+
+              <button class="button button-red" type="submit">Map workload to banks</button><p class="control-note">For a new device, dimension, or non-ideality setting, run the repository’s behavioral sweep rather than extrapolating this interface.</p>
+            </form>
+
+            <div class="sim-chip crossbar-sim-chip" aria-live="polite"><div class="sim-chip-head"><div><span id="xsim-chip-kicker">ReRAM · N = 288</span><h3>Multi-bank crossbar compute fabric</h3></div><strong id="xsim-status">Fits in one mapping wave</strong></div><ol class="sim-pipeline" aria-label="Active crossbar pipeline"><li><span>01</span>Drive input DACs</li><li><span>02</span>Crossbar MVM</li><li><span>03</span>TIA + ADC</li><li><span>04</span>Digital reduction</li></ol><div class="sim-bank-grid" id="xsim-bank-grid" aria-label="Representative physical crossbar bank map"></div><div class="sim-bank-legend"><span><i class="active crossbar-legend"></i>Mapped this wave</span><span><i class="crossbar-legend"></i>Available</span><strong id="xsim-bank-caption">Showing all 8 physical banks</strong></div><div class="sim-results"><div><span>Paper-selected bank Rs*</span><strong id="xsim-rs">681 Ω</strong></div><div><span>Physical columns / bank</span><strong id="xsim-columns">576</strong></div><div><span>Mapping waves</span><strong id="xsim-waves">1</strong></div></div><p class="sim-mapping" id="xsim-mapping">576 input terms partition into 2 local crossbar banks of logical dimension 288, scheduled in one wave.</p><p class="sim-advice" id="xsim-advice"><strong>Design reading:</strong> Use the paper-selected sensing point, then combine converted partial sums digitally.</p><p class="sim-boundary">Research boundary: the sensing coordinates are paper-reported points for the three evaluated ResNet-20 layer sizes. Bank count and scheduling illustrate workload partitioning; they are not measurements of a fabricated multi-bank chip.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section"><div class="container"><div class="section-heading"><p class="section-kicker red">Crossbar scaling rule</p><h2>Keep analog optimization local.</h2></div><div class="principle-grid"><article class="principle-card"><span>1</span><h3>Select Rs*</h3><p>For each device and logical dimension, identify the sensing resistance that balances clipping and quantization.</p></article><article class="principle-card"><span>2</span><h3>Count 2N columns</h3><p>Differential encoding maps every N-term signed dot product onto 2N physical crossbar columns.</p></article><article class="principle-card"><span>3</span><h3>Accumulate digitally</h3><p>Partition larger dot products across banks and combine their converted partial sums outside the array.</p></article></div></div></section>
+    </main>
+
+    <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><p>From a locally balanced crossbar to a larger multi-bank compute fabric.</p><a class="footer-link" href="optimum.html">Review the SNR optimum →</a></div></footer>
+  </body>
+</html>

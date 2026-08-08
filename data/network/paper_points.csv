@@ -1,0 +1,4 @@
+device,exhaustive_accuracy_percent,snr_selected_accuracy_percent,exhaustive_rs2_ohm,exhaustive_rs3_ohm,snr_selected_rs2_ohm,snr_selected_rs3_ohm
+MRAM,83.55,83.09,372,177,464,268
+ReRAM,84.52,84.11,825,383,681,562
+FeFET,84.30,83.53,9540,7190,10980,10980
