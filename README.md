@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/crossbar-mark.svg" width="120" alt="Crossbar IMC project mark" />
+</p>
+
 # Crossbar IMC accuracy analysis
 
 [Research website](https://calmyor.github.io/Crossbar-analysis/) · [IEEE paper](https://doi.org/10.1109/ISCAS48785.2022.9937336)

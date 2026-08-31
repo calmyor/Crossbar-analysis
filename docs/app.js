@@ -1,6 +1,17 @@
 const menuButton = document.querySelector(".menu-toggle");
 const siteNav = document.querySelector("#site-nav");
 
+if (siteNav) {
+  const currentSection = siteNav.querySelector('[aria-current="page"]');
+  const revealCurrentSection = () => {
+    if (!currentSection || siteNav.scrollWidth <= siteNav.clientWidth) return;
+    siteNav.scrollLeft = Math.max(0, currentSection.offsetLeft - (siteNav.clientWidth - currentSection.offsetWidth) / 2);
+  };
+
+  requestAnimationFrame(revealCurrentSection);
+  window.addEventListener("resize", revealCurrentSection);
+}
+
 if (menuButton && siteNav) {
   const closeMenu = (returnFocus = false) => {
     menuButton.setAttribute("aria-expanded", "false");
