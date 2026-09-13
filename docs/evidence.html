@@ -1,14 +1,86 @@
 <!doctype html>
 <html lang="en">
-  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#ffffff" /><meta name="description" content="Neural-network evidence for the analytically selected resistive-crossbar SNR optimum." /><link rel="icon" href="assets/crossbar-mark.svg" type="image/svg+xml" /><link rel="stylesheet" href="styles.css" /><script src="app.js" defer></script><title>Accuracy Evidence · Crossbar IMC</title></head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Neural-network evidence for the analytically selected resistive-crossbar SNR optimum." />
+    <link rel="canonical" href="https://calmyor.github.io/Crossbar-analysis/evidence.html" />
+    <meta property="og:title" content="Accuracy Evidence · Crossbar IMC" />
+    <meta property="og:description" content="Neural-network evidence for the analytically selected resistive-crossbar SNR optimum." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://calmyor.github.io/Crossbar-analysis/evidence.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="assets/crossbar-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+    <title>Accuracy Evidence · Crossbar IMC</title>
+  </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="site-nav" aria-label="Crossbar study"><a href="index.html">Overview</a><a href="architect.html">Architect</a><a href="architecture.html">Architecture</a><a href="optimum.html">SNR optimum</a><a href="evidence.html" aria-current="page">Accuracy evidence</a><a href="paper.html">Paper</a><a class="nav-repository" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></nav><a class="header-repo" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></div></header>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="site-nav" aria-label="Crossbar study"><a href="index.html">Overview</a><a href="architecture.html">Architecture</a><a href="optimum.html">SNR optimum</a><a href="evidence.html" aria-current="page">Accuracy evidence</a><a href="architect.html">Architect</a><a href="paper.html">Paper</a><a class="nav-repository" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></nav><a class="header-repo" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></div></header>
     <main id="main">
       <section class="page-hero"><div class="container page-hero-grid"><div><p class="eyebrow red">Accuracy evidence</p><h1>The SNR-selected point remains within <span class="accent-red">one accuracy point.</span></h1><p class="hero-summary">The device-specific circuit coordinates are compared with an exhaustive parameter search after mapping ResNet-20 across the evaluated MRAM, ReRAM, and FeFET crossbars.</p><div class="hero-actions"><a class="button button-red" href="#result">See the result</a><a class="button button-secondary" href="https://github.com/calmyor/Crossbar-analysis/blob/main/data/network/paper_points.csv">Open result data ↗</a></div></div><aside class="page-stat-card red"><span>Gap from exhaustive search</span><strong>&lt;1 pp</strong><p>Every SNR-selected result remains within one percentage point of its device-specific empirical maximum.</p></aside></div></section>
-      <section class="section section-tint" id="result"><div class="container"><div class="result-banner red"><div class="result-number">&lt;1 pp</div><div><h2>Accuracy gap from the exhaustive circuit search</h2><p>Across the evaluated MRAM, ReRAM, and FeFET mappings, ResNet-20 accuracy at the SNR-selected parameters remains within one percentage point of the empirically found maximum.</p></div></div><div class="evidence-table-wrap"><table class="evidence-table"><caption>Exact ResNet-20 / CIFAR-10 results reported in the paper</caption><thead><tr><th scope="col">Device</th><th scope="col">Exhaustive maximum</th><th scope="col">SNR-selected</th><th scope="col">Gap</th></tr></thead><tbody><tr><th scope="row">MRAM</th><td>83.55%</td><td>83.09%</td><td>0.46 pp</td></tr><tr><th scope="row">ReRAM</th><td>84.52%</td><td>84.11%</td><td>0.41 pp</td></tr><tr><th scope="row">FeFET</th><td>84.30%</td><td>83.53%</td><td>0.77 pp</td></tr></tbody></table></div><p class="evidence-note">Fixed-point baseline: 84.94%. The mapped experiment used signed 5-bit inputs, ternary weights, and no retraining.</p></div></section>
-      <section class="section"><div class="container"><div class="section-heading"><p class="section-kicker red">Evidence chain</p><h2>Device-specific sensing coordinates survive three checks.</h2></div><div class="principle-grid"><article class="principle-card"><span>1</span><h3>Analytical selection</h3><p>The model identifies the sensing resistance that maximizes compute SNR for each evaluated device and N.</p></article><article class="principle-card"><span>2</span><h3>Circuit agreement</h3><p>In the paper’s specific ReRAM validation case, the behavioral SNR trend follows the precomputed SPICE result.</p></article><article class="principle-card"><span>3</span><h3>Network transfer</h3><p>The selected device-specific points closely match the best mapped ResNet-20 accuracies.</p></article></div></div></section>
+
+      <section class="section section-tint" id="result">
+        <div class="container">
+          <div class="result-banner red"><div class="result-number">&lt;1 pp</div><div><h2>Accuracy gap from the exhaustive circuit search</h2><p>Across the evaluated MRAM, ReRAM, and FeFET mappings, ResNet-20 accuracy at the SNR-selected parameters remains within one percentage point of the empirically found maximum.</p></div></div>
+          <div class="evidence-table-wrap"><table class="evidence-table"><caption>Exact ResNet-20 / CIFAR-10 results reported in the paper</caption><thead><tr><th scope="col">Device</th><th scope="col">Exhaustive maximum</th><th scope="col">SNR-selected</th><th scope="col">Gap</th></tr></thead><tbody><tr><th scope="row">MRAM</th><td>83.55%</td><td>83.09%</td><td>0.46 pp</td></tr><tr><th scope="row">ReRAM</th><td>84.52%</td><td>84.11%</td><td>0.41 pp</td></tr><tr><th scope="row">FeFET</th><td>84.30%</td><td>83.53%</td><td>0.77 pp</td></tr></tbody></table></div>
+          <p class="evidence-note">Fixed-point baseline: 84.94%. The mapped experiment used signed 5-bit inputs, ternary weights, and no retraining.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container content-split">
+          <div class="content-copy">
+            <p class="section-kicker red">Network mapping</p>
+            <h2>ResNet-20 maps onto three crossbar sizes.</h2>
+            <p>The three residual blocks implement dot products of dimension N = 144, 288, and 576, and each block maps to a crossbar with its own sensing resistance. R<sub>s1</sub> is held at its optimum while (R<sub>s2</sub>, R<sub>s3</sub>) are swept. The SNR analysis picks its point without simulating the network.</p>
+          </div>
+          <div class="repo-panel">
+            <div class="repo-head"><span>ResNet-20 layer map</span><span>3 crossbar arrays</span></div>
+            <ul class="repo-list">
+              <li><span>1</span><div><strong>Block 1 · 16 channels</strong><small>N = 144 · 288 physical columns · R<sub>s1</sub> fixed at R<sub>s1</sub>*</small></div></li>
+              <li><span>2</span><div><strong>Block 2 · 32 channels</strong><small>N = 288 · 576 physical columns · R<sub>s2</sub> swept</small></div></li>
+              <li><span>3</span><div><strong>Block 3 · 64 channels</strong><small>N = 576 · 1,152 physical columns · R<sub>s3</sub> swept</small></div></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tint">
+        <div class="container">
+          <div class="section-heading"><p class="section-kicker red">Accuracy surfaces</p><h2>The SNR-selected point lands beside the exhaustive maximum.</h2><p>Blue marks the exhaustive maximum. Red marks the SNR-selected point.</p></div>
+          <div class="device-explorer crossbar-explorer" data-tabs>
+            <div class="device-tabs" role="tablist" aria-label="Evaluated devices">
+              <button type="button" role="tab" id="tab-mram" aria-controls="panel-mram" aria-selected="true">MRAM<span>Contrast 2</span></button>
+              <button type="button" role="tab" id="tab-reram" aria-controls="panel-reram" aria-selected="false" tabindex="-1">ReRAM<span>Contrast 12</span></button>
+              <button type="button" role="tab" id="tab-fefet" aria-controls="panel-fefet" aria-selected="false" tabindex="-1">FeFET<span>Contrast 1,000</span></button>
+            </div>
+            <div class="device-panel" role="tabpanel" id="panel-mram" aria-labelledby="tab-mram">
+              <figure class="paper-figure"><img src="assets/figures/crossbar-accuracy-mram.png" alt="MRAM ResNet-20 accuracy surface over the block 2 and block 3 sensing resistances, with the exhaustive maximum and the SNR-selected point close together near the peak." /><figcaption><strong>MRAM.</strong> R<sub>s1</sub> = R<sub>s1</sub>* = 464 Ω. Adapted from Fig. 4(a) of the ISCAS 2022 paper.</figcaption></figure>
+              <div><h3>MRAM keeps 83.09% at the SNR-selected point.</h3><dl class="device-stats"><div><dt>Exhaustive maximum</dt><dd>83.55% at (372 Ω, 177 Ω)</dd></div><div><dt>SNR-selected</dt><dd>83.09% at (464 Ω, 268 Ω)</dd></div><div><dt>Gap</dt><dd>0.46 pp</dd></div></dl></div>
+            </div>
+            <div class="device-panel" role="tabpanel" id="panel-reram" aria-labelledby="tab-reram" hidden>
+              <figure class="paper-figure"><img src="assets/figures/crossbar-accuracy-reram.png" alt="ReRAM ResNet-20 accuracy surface over the block 2 and block 3 sensing resistances, with the exhaustive maximum and the SNR-selected point close together near the peak." /><figcaption><strong>ReRAM.</strong> R<sub>s1</sub> = R<sub>s1</sub>* = 835 Ω. Adapted from Fig. 4(b) of the ISCAS 2022 paper.</figcaption></figure>
+              <div><h3>ReRAM keeps 84.11% at the SNR-selected point.</h3><dl class="device-stats"><div><dt>Exhaustive maximum</dt><dd>84.52% at (825 Ω, 383 Ω)</dd></div><div><dt>SNR-selected</dt><dd>84.11% at (681 Ω, 562 Ω)</dd></div><div><dt>Gap</dt><dd>0.41 pp</dd></div></dl></div>
+            </div>
+            <div class="device-panel" role="tabpanel" id="panel-fefet" aria-labelledby="tab-fefet" hidden>
+              <figure class="paper-figure"><img src="assets/figures/crossbar-accuracy-fefet.png" alt="FeFET ResNet-20 accuracy surface over the block 2 and block 3 sensing resistances, with the exhaustive maximum and the SNR-selected point close together on the plateau." /><figcaption><strong>FeFET.</strong> R<sub>s1</sub> = R<sub>s1</sub>* = 8.28 kΩ. Adapted from Fig. 4(c) of the ISCAS 2022 paper.</figcaption></figure>
+              <div><h3>FeFET keeps 83.53% at the SNR-selected point.</h3><dl class="device-stats"><div><dt>Exhaustive maximum</dt><dd>84.30% at (9.54 kΩ, 7.19 kΩ)</dd></div><div><dt>SNR-selected</dt><dd>83.53% at (10.98 kΩ, 10.98 kΩ)</dd></div><div><dt>Gap</dt><dd>0.77 pp</dd></div></dl></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading"><p class="section-kicker red">Evidence chain</p><h2>Device-specific sensing coordinates survive three checks.</h2><p>Maximizing array-level compute SNR also maximizes network accuracy, so each bank’s sensing resistance can come from the model instead of a simulation-based search.</p></div>
+          <div class="principle-grid"><article class="principle-card"><span>1</span><h3>Analytical selection</h3><p>The model identifies the sensing resistance that maximizes compute SNR for each evaluated device and N.</p></article><article class="principle-card"><span>2</span><h3>Circuit agreement</h3><p>In the paper’s specific ReRAM validation case, the behavioral SNR trend follows the precomputed SPICE result.</p></article><article class="principle-card"><span>3</span><h3>Network transfer</h3><p>The selected device-specific points closely match the best mapped ResNet-20 accuracies.</p></article></div>
+          <div class="cartoon-cta"><p>The architect applies these sensing points to a workload partitioned across crossbar banks.</p><a class="button button-red" href="architect.html">Open the architect</a></div>
+        </div>
+      </section>
     </main>
-    <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><p>Network evidence for the analytically selected crossbar coordinate.</p><a class="footer-link" href="paper.html">Read the publication →</a></div></footer>
+    <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><p>Network evidence for the analytically selected crossbar coordinate.</p><div class="footer-links"><a href="https://doi.org/10.1109/ISCAS48785.2022.9937336">ISCAS 2022 paper <span aria-hidden="true">↗</span></a><a href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a><a class="footer-link" href="architect.html">Open the architect →</a></div><p class="footer-note">© 2026 The authors. Figures are adapted from the ISCAS 2022 paper for this research artifact.</p></div></footer>
   </body>
 </html>

@@ -46,28 +46,73 @@ if (menuButton && siteNav) {
   });
 }
 
+document.querySelectorAll("[data-tabs]").forEach((group) => {
+  const tabs = [...group.querySelectorAll('[role="tab"]')];
+  const select = (tab, focus = false) => {
+    tabs.forEach((item) => {
+      const selected = item === tab;
+      item.setAttribute("aria-selected", String(selected));
+      item.tabIndex = selected ? 0 : -1;
+      const panel = document.getElementById(item.getAttribute("aria-controls"));
+      if (panel) panel.hidden = !selected;
+    });
+    if (focus) tab.focus();
+  };
+  const steps = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (event) => {
+      let next;
+      if (event.key in steps) next = tabs[(index + steps[event.key] + tabs.length) % tabs.length];
+      else if (event.key === "Home") next = tabs[0];
+      else if (event.key === "End") next = tabs[tabs.length - 1];
+      if (!next) return;
+      event.preventDefault();
+      select(next, true);
+    });
+  });
+});
+
+document.querySelectorAll("[data-copy-target]").forEach((button) => {
+  const label = button.textContent;
+  button.addEventListener("click", async () => {
+    const target = document.getElementById(button.dataset.copyTarget);
+    if (!target) return;
+    try {
+      await navigator.clipboard.writeText(target.textContent.trim());
+      button.textContent = "Copied";
+    } catch {
+      button.textContent = "Select the text to copy";
+    }
+    window.setTimeout(() => { button.textContent = label; }, 1600);
+  });
+});
+
 const crossbarArchitectForm = document.querySelector("#crossbar-architect-form");
 
 if (crossbarArchitectForm) {
+  const model = window.CROSSBAR_MODEL;
+  const byId = (id) => document.querySelector(`#${id}`);
   const controls = {
-    device: document.querySelector("#xsim-device"),
-    workload: document.querySelector("#xsim-workload"),
-    bankN: document.querySelector("#xsim-bank-n"),
-    banks: document.querySelector("#xsim-banks")
+    device: byId("xsim-device"),
+    bankN: byId("xsim-bank-n"),
+    wire: byId("xsim-wire"),
+    input: byId("xsim-input"),
+    workload: byId("xsim-workload"),
+    banks: byId("xsim-banks"),
+    training: byId("xsim-training")
   };
-
-  const outputs = {
-    banks: document.querySelector("#xsim-banks-value")
-  };
-
-  const profiles = {
-    mram: { name: "MRAM", optimumRs: { 144: 464, 288: 464, 576: 268 } },
-    reram: { name: "ReRAM", optimumRs: { 144: 835, 288: 681, 576: 562 } },
-    fefet: { name: "FeFET", optimumRs: { 144: 8280, 288: 10980, 576: 10980 } }
+  const levelOrder = ["raw", "calibrated", "ir_aware", "chip_in_loop"];
+  const statusText = {
+    raw: "Accurate without compensation",
+    calibrated: "Accurate with calibration",
+    ir_aware: "Needs IR-aware mapping",
+    chip_in_loop: "Needs chip-in-the-loop tuning"
   };
 
   function renderCrossbarBanks(physicalBanks, requiredBanks) {
-    const bankGrid = document.querySelector("#xsim-bank-grid");
+    const bankGrid = byId("xsim-bank-grid");
     const visibleBanks = Math.min(24, physicalBanks);
     const activeBanks = Math.min(requiredBanks, physicalBanks);
     const activeVisible = Math.round(visibleBanks * activeBanks / physicalBanks);
@@ -90,55 +135,119 @@ if (crossbarArchitectForm) {
 
     bankGrid.replaceChildren(fragment);
     bankGrid.setAttribute("aria-label", `${activeBanks} of ${physicalBanks} physical crossbar banks active in the current mapping wave`);
-    document.querySelector("#xsim-bank-caption").textContent = visibleBanks < physicalBanks
+    byId("xsim-bank-caption").textContent = visibleBanks < physicalBanks
       ? `Showing ${visibleBanks} representative banks of ${physicalBanks}`
       : `Showing all ${physicalBanks} physical banks`;
   }
 
-  function formatResistance(value) {
-    return value >= 1000 ? `${(value / 1000).toFixed(value % 1000 === 0 ? 0 : 2)} kΩ` : `${value} Ω`;
+  function cell(tag, text, className) {
+    const element = document.createElement(tag);
+    element.textContent = text;
+    if (className) element.className = className;
+    return element;
+  }
+
+  const isBounded = (level, training) => Boolean(level.bounded && level.bounded[training]);
+  const recovers = (level, training) => !isBounded(level, training)
+    && model.baseline_accuracy - level.accuracy[training] <= 1;
+
+  function renderLevels(point, training) {
+    const rows = levelOrder.map((key) => {
+      const level = point.levels[key];
+      const accuracy = level.accuracy[training];
+      const bounded = isBounded(level, training);
+      const loss = model.baseline_accuracy - accuracy;
+      const row = document.createElement("tr");
+      row.className = recovers(level, training) ? "level-ok" : !bounded && loss <= 5 ? "level-warn" : "level-low";
+      const heading = cell("th", model.levels[key]);
+      heading.scope = "row";
+      const accuracyText = bounded ? "Beyond measured range" : `${accuracy.toFixed(1)}%`;
+      row.append(heading, cell("td", `${level.snr_db.toFixed(1)} dB`), cell("td", accuracyText));
+      if (bounded) row.title = `Weight noise exceeds the measured curve; accuracy is at most ${accuracy.toFixed(1)}%`;
+      return row;
+    });
+    byId("xsim-levels").replaceChildren(...rows);
+  }
+
+  function renderChipFits() {
+    const body = byId("xsim-chip-fits");
+    if (!body) return;
+    const rows = [];
+    model.chip_fits.forEach((chip) => {
+      const results = [...(chip.fit ? [["Fitted", chip.fit]] : []), ...chip.checks.map((check) => ["Check", check])];
+      results.forEach(([role, result], index) => {
+        const row = document.createElement("tr");
+        if (index === 0) {
+          const name = cell("th", chip.chip);
+          name.scope = "row";
+          name.rowSpan = results.length;
+          row.append(name);
+        }
+        const precision = "predicted_bits" in result;
+        const reported = precision ? `${result.reported_bits.toFixed(1)} bits` : `${result.reported_accuracy.toFixed(2)}%`;
+        const predicted = precision
+          ? `${result.predicted_bits.toFixed(1)} bits (${result.error >= 0 ? "+" : ""}${result.error.toFixed(1)})`
+          : `${result.predicted_accuracy.toFixed(2)}% (${result.error >= 0 ? "+" : ""}${result.error.toFixed(2)} pt)`;
+        row.append(cell("td", result.observation), cell("td", role), cell("td", reported), cell("td", predicted));
+        rows.push(row);
+      });
+    });
+    body.replaceChildren(...rows);
   }
 
   function evaluateCrossbarArchitecture() {
-    const device = controls.device.value;
-    const profile = profiles[device];
-    const workload = Number(controls.workload.value);
     const bankN = Number(controls.bankN.value);
+    const workload = Number(controls.workload.value);
     const physicalBanks = Number(controls.banks.value);
+    const training = controls.training.value;
+    const point = model.points.find((entry) => entry.device === controls.device.value
+      && entry.wire === controls.wire.value && entry.input === controls.input.value && entry.N === bankN);
 
-    outputs.banks.textContent = String(physicalBanks);
+    byId("xsim-banks-value").textContent = String(physicalBanks);
     const requiredBanks = Math.ceil(workload / bankN);
     const waves = Math.ceil(requiredBanks / physicalBanks);
-    const optimumRs = profile.optimumRs[bankN];
-
     renderCrossbarBanks(physicalBanks, requiredBanks);
-    document.querySelector("#xsim-chip-kicker").textContent = `${profile.name} · N = ${bankN}`;
-    document.querySelector("#xsim-rs").textContent = formatResistance(optimumRs);
-    document.querySelector("#xsim-columns").textContent = String(2 * bankN);
-    document.querySelector("#xsim-waves").textContent = String(waves);
-    document.querySelector("#xsim-mapping").textContent = `${workload.toLocaleString()} input terms partition into ${requiredBanks} local crossbar ${requiredBanks === 1 ? "bank" : "banks"} of logical dimension ${bankN}, scheduled in ${waves} ${waves === 1 ? "wave" : "waves"}.`;
 
-    const statusElement = document.querySelector("#xsim-status");
-    statusElement.textContent = waves === 1 ? "Fits in one mapping wave" : `${waves} mapping waves`;
-    statusElement.className = waves === 1 ? "" : "status-warn";
+    const device = model.devices[controls.device.value];
+    byId("xsim-chip-kicker").textContent = `${device.label} · N = ${bankN} · ${model.inputs[controls.input.value].label}`;
+    byId("xsim-columns").textContent = String(2 * bankN);
+    byId("xsim-waves").textContent = String(waves);
+    byId("xsim-gain").textContent = `${Math.max(0, Math.round((1 - point.gain) * 100))}%`;
+    renderLevels(point, training);
+
+    const bankText = `${workload.toLocaleString()} input terms partition into ${requiredBanks} local crossbar ${requiredBanks === 1 ? "bank" : "banks"} of logical dimension ${bankN}`;
+    byId("xsim-mapping").textContent = `${bankText}, scheduled in ${waves} ${waves === 1 ? "wave" : "waves"}.`;
+
+    const firstGood = levelOrder.find((key) => recovers(point.levels[key], training));
+    const status = byId("xsim-status");
+    status.textContent = firstGood ? statusText[firstGood] : "Loses accuracy even with tuning";
+    status.className = !firstGood ? "status-low" : ["ir_aware", "chip_in_loop"].includes(firstGood) ? "status-warn" : "";
 
     let advice;
-    if (waves === 1) {
-      advice = `Use the paper-selected ${profile.name} sensing point for this evaluated layer size, then combine the ${requiredBanks} converted partial sums digitally.`;
+    if (!firstGood) {
+      const tuned = point.levels.chip_in_loop;
+      const gap = (model.baseline_accuracy - tuned.accuracy[training]).toFixed(1);
+      advice = isBounded(tuned, training)
+        ? `Even chip-in-the-loop tuning leaves the SNR beyond the measured noise range, at least ${gap} points below the ${model.baseline_accuracy}% baseline. Use a smaller bank, pulse-width inputs, or wider wires.`
+        : `Even chip-in-the-loop tuning leaves ${gap} points below the ${model.baseline_accuracy}% baseline. Use a smaller bank, pulse-width inputs, or wider wires.`;
     } else {
-      advice = `The local coordinate remains ${formatResistance(optimumRs)}, but this fabric needs ${waves} scheduling waves. Add at least ${requiredBanks - physicalBanks} banks to fit the mapping in one wave.`;
+      advice = `${model.levels[firstGood]} brings accuracy within one point of the ${model.baseline_accuracy}% baseline.`;
     }
-
-    const adviceElement = document.querySelector("#xsim-advice");
-    const adviceLead = document.createElement("strong");
-    adviceLead.textContent = "Design reading: ";
-    adviceElement.replaceChildren(adviceLead, document.createTextNode(advice));
+    if (waves > 1) advice += ` The fabric needs ${waves} scheduling waves; add ${requiredBanks - physicalBanks} banks to map it in one.`;
+    const adviceElement = byId("xsim-advice");
+    adviceElement.replaceChildren(cell("strong", "Design reading: "), document.createTextNode(advice));
   }
 
-  crossbarArchitectForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+  if (model) {
+    crossbarArchitectForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      evaluateCrossbarArchitecture();
+    });
+    Object.values(controls).forEach((control) => control.addEventListener("input", evaluateCrossbarArchitecture));
     evaluateCrossbarArchitecture();
-  });
-  Object.values(controls).forEach((control) => control.addEventListener("input", evaluateCrossbarArchitecture));
-  evaluateCrossbarArchitecture();
+    renderChipFits();
+  } else {
+    byId("xsim-status").textContent = "Model data missing";
+    byId("xsim-status").className = "status-low";
+  }
 }

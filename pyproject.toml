@@ -13,7 +13,7 @@ authors = [
   {name = "Ameya Patil"},
   {name = "Naresh R. Shanbhag"},
 ]
-dependencies = ["numpy>=1.23"]
+dependencies = ["numpy>=1.23", "scipy>=1.9"]
 keywords = ["in-memory computing", "crossbar", "eNVM", "SNR"]
 
 [project.optional-dependencies]

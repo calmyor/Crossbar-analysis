@@ -1,13 +1,113 @@
 <!doctype html>
 <html lang="en">
-  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#ffffff" /><meta name="description" content="The signal, noise, and conversion path of a voltage-driven resistive crossbar IMC architecture." /><link rel="icon" href="assets/crossbar-mark.svg" type="image/svg+xml" /><link rel="stylesheet" href="styles.css" /><script src="app.js" defer></script><title>Architecture · Crossbar IMC</title></head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="The signal, noise, and conversion path of a voltage-driven resistive crossbar IMC architecture." />
+    <link rel="canonical" href="https://calmyor.github.io/Crossbar-analysis/architecture.html" />
+    <meta property="og:title" content="Architecture · Crossbar IMC" />
+    <meta property="og:description" content="The signal, noise, and conversion path of a voltage-driven resistive crossbar IMC architecture." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://calmyor.github.io/Crossbar-analysis/architecture.html" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="assets/crossbar-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+    <title>Architecture · Crossbar IMC</title>
+  </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="site-nav" aria-label="Crossbar study"><a href="index.html">Overview</a><a href="architect.html">Architect</a><a href="architecture.html" aria-current="page">Architecture</a><a href="optimum.html">SNR optimum</a><a href="evidence.html">Accuracy evidence</a><a href="paper.html">Paper</a><a class="nav-repository" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></nav><a class="header-repo" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></div></header>
+    <header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button><nav id="site-nav" class="site-nav" aria-label="Crossbar study"><a href="index.html">Overview</a><a href="architecture.html" aria-current="page">Architecture</a><a href="optimum.html">SNR optimum</a><a href="evidence.html">Accuracy evidence</a><a href="architect.html">Architect</a><a href="paper.html">Paper</a><a class="nav-repository" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></nav><a class="header-repo" href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a></div></header>
     <main id="main">
       <section class="page-hero"><div class="container page-hero-grid"><div><p class="eyebrow red">Architecture</p><h1>Perpendicular lines create a <span class="accent-red">shared array current.</span></h1><p class="hero-summary">Voltage DACs drive the bit-lines while each source-line current passes through a transimpedance amplifier and ADC. The sensing resistance connects the analog array to the available conversion range.</p><div class="hero-actions"><a class="button button-red" href="#signal-path">Trace the signal path</a><a class="button button-secondary" href="optimum.html">Continue to the optimum</a></div></div><aside class="page-stat-card red system-mark-card"><span class="architecture-icon crossbar-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><h2>N terms → 2N columns</h2><p>Differential encoding stores each signed logical weight in a complementary pair of physical bitcells.</p></aside></div></section>
-      <section class="section section-tint" id="signal-path"><div class="container content-split"><div class="content-copy"><p class="section-kicker red">Signal and noise</p><h2>The design variable sits between the array and ADC.</h2><ul class="detail-list"><li><div><strong>Signal path.</strong> The sensing resistance, modeled as the TIA input impedance, scales the source-line current reaching the readout.</div></li><li><div><strong>Noise path.</strong> The reported compute-SNR model includes DAC mismatch, bitcell conductance variation, ADC clipping, and ADC quantization.</div></li><li><div><strong>Design target.</strong> Select the sensing resistance that maximizes total compute SNR for the chosen device and N.</div></li></ul></div><figure class="paper-figure"><img src="assets/figures/crossbar-architecture.png" alt="Voltage-driven resistive crossbar with perpendicular input columns, source-line current sensing, transimpedance amplifiers, and ADCs." /><figcaption><strong>Crossbar architecture.</strong> Perpendicular bit-lines and source-lines feed one TIA and ADC per output source line. Adapted from Fig. 1(a) of the ISCAS 2022 paper.</figcaption></figure></div></section>
+
+      <section class="section section-tint" id="signal-path">
+        <div class="container content-split">
+          <div class="content-copy">
+            <p class="section-kicker red">Crossbar operation</p>
+            <h2>The design variable sits between the array and ADC.</h2>
+            <p>Bit-lines (BLs) run perpendicular to source-lines (SLs), with a 1T1R bitcell at each crossing. DACs drive the BLs, and the TIA on each SL holds the line at V<sub>DC</sub>. Activating M word-lines computes an M × N matrix-vector multiplication in one step.</p>
+            <ul class="detail-list"><li><div><strong>Signal path.</strong> R<sub>s</sub>, the TIA input impedance, scales the SL current reaching the ADC.</div></li><li><div><strong>Noise path.</strong> DAC mismatch, bitcell variation, ADC clipping, and ADC quantization.</div></li><li><div><strong>Design target.</strong> The R<sub>s</sub> that maximizes compute SNR for the chosen device and N.</div></li></ul>
+          </div>
+          <figure class="paper-figure"><img src="assets/figures/crossbar-architecture.png" alt="Voltage-driven resistive crossbar with perpendicular input columns, source-line current sensing, transimpedance amplifiers, and ADCs." /><figcaption><strong>Crossbar architecture.</strong> Perpendicular bit-lines and source-lines feed one TIA and ADC per output source line. Adapted from Fig. 1(a) of the ISCAS 2022 paper.</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container content-split">
+          <div class="content-copy">
+            <p class="section-kicker red">Weight encoding</p>
+            <h2>Complementary columns remove the zero-input current.</h2>
+            <p>Finite R<sub>on</sub> and R<sub>off</sub> leave a current even at a zero dot product. Differential encoding removes it: adjacent columns receive opposite-sign inputs, and a bitcell pair stores one ternary weight. An N-term dot product therefore occupies 2N physical columns.</p>
+          </div>
+          <figure class="equation">
+            <math display="block"><msub><mi>b</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mo>=</mo><mrow><mtable class="cases"><mtr><mtd><mn>1</mn><mo>,</mo></mtd><mtd><mtext>if </mtext><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>&gt;</mo><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub></mtd></mtr><mtr><mtd><mn>0</mn><mo>,</mo></mtd><mtd><mtext>if </mtext><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub></mtd></mtr><mtr><mtd><mo>−</mo><mn>1</mn><mo>,</mo></mtd><mtd><mtext>if </mtext><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>&lt;</mo><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub></mtd></mtr></mtable></mrow></math>
+            <figcaption>Ternary weight stored in a bitcell pair. Eq. (1) of the paper.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section section-tint">
+        <div class="container content-split">
+          <div class="content-copy">
+            <p class="section-kicker red">Signal model</p>
+            <h2>Only a fraction of the ideal current reaches the readout.</h2>
+            <p>R<sub>s</sub> appears in parallel with the array resistance R<sub>arr</sub>, so the SL delivers only a fraction S<sub>I</sub> of the ideal current. Since R<sub>arr</sub> ∝ 1/N, a longer dot product shrinks the signal, and lowering R<sub>s</sub> recovers it. However, an R<sub>s</sub> below about 500 Ω carries significant area overhead.</p>
+          </div>
+          <div>
+            <figure class="equation">
+              <math display="block"><msub><mi>I</mi><mtext>sig</mtext></msub><mo>=</mo><mfrac><msub><mi>R</mi><mtext>arr</mtext></msub><mrow><msub><mi>R</mi><mtext>arr</mtext></msub><mo>+</mo><msub><mi>R</mi><mtext>s</mtext></msub></mrow></mfrac><mrow><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><msub><mi>V</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub><mi mathvariant="normal">Δ</mi><msub><mi>G</mi><mrow><mn>2</mn><mi>k</mi></mrow></msub></mrow><mo>=</mo><msub><mi>S</mi><mi>I</mi></msub><msub><mi>I</mi><mtext>ideal</mtext></msub></math>
+              <figcaption>Signal current on the SL. Eq. (2) of the paper.</figcaption>
+            </figure>
+            <figure class="equation">
+              <math display="block"><msub><mi>R</mi><mtext>arr</mtext></msub><mo>=</mo><mfrac><mn>1</mn><mrow><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow><mn>2</mn><mi>N</mi></mrow></munderover><msub><mi>G</mi><mi>j</mi></msub></mrow></mfrac><mo separator="true">,</mo><mspace width="1.5em"></mspace><msub><mi>S</mi><mi>I</mi></msub><mo>=</mo><mfrac><msub><mi>R</mi><mtext>arr</mtext></msub><mrow><msub><mi>R</mi><mtext>arr</mtext></msub><mo>+</mo><msub><mi>R</mi><mtext>s</mtext></msub></mrow></mfrac></math>
+              <figcaption>Array resistance and current scaling factor. Eq. (3) of the paper.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading"><p class="section-kicker red">Noise model</p><h2>Four non-idealities corrupt the source-line current.</h2></div>
+          <figure class="equation centered">
+            <math display="block"><msub><mi>I</mi><mtext>SL</mtext></msub><mo>=</mo><msub><mi>I</mi><mtext>sig</mtext></msub><mo>+</mo><msub><mi>I</mi><mtext>nb</mtext></msub><mo>+</mo><msub><mi>I</mi><mtext>nd</mtext></msub><mo>+</mo><msub><mi>I</mi><mtext>nc</mtext></msub><mo>+</mo><msub><mi>I</mi><mtext>nq</mtext></msub></math>
+            <figcaption>SL current with its four noise terms. Eq. (4) of the paper.</figcaption>
+          </figure>
+          <div class="principle-grid four">
+            <article class="principle-card"><span>1</span><small>I<sub>nb</sub> · Array</small><h3>Bitcell variation</h3><p>G<sub>on</sub> and G<sub>off</sub> vary across the array, modeled with a 4% standard-deviation-to-mean ratio.</p></article>
+            <article class="principle-card"><span>2</span><small>I<sub>nd</sub> · Drivers</small><h3>Input-DAC mismatch</h3><p>DAC finger mismatch adds noise that grows with the input, modeled at 4% per finger.</p></article>
+            <article class="principle-card"><span>3</span><small>I<sub>nc</sub> · ADC</small><h3>Clipping</h3><p>SL current beyond ±I<sub>clip</sub> = ±2 µA saturates at the ADC rail.</p></article>
+            <article class="principle-card"><span>4</span><small>I<sub>nq</sub> · ADC</small><h3>Quantization</h3><p>A B<sub>ADC</sub>-bit ADC adds uniform noise over one step of the clipping range.</p></article>
+          </div>
+
+          <div class="content-split figure-first" style="margin-top: clamp(64px, 7vw, 104px);">
+            <figure class="paper-figure"><img src="assets/figures/crossbar-noise-sources.png" alt="Source-line current versus ideal dot product for a ReRAM crossbar, showing clipping at plus and minus two microamperes and an inset of noisy samples scattered around the ideal line." /><figcaption><strong>Noise on the SL current.</strong> ReRAM, N = 512, R<sub>s</sub> = 316 Ω, 6 b ADC. Adapted from Fig. 1(b) of the ISCAS 2022 paper.</figcaption></figure>
+            <div class="content-copy">
+              <p class="section-kicker red">Compute SNR</p>
+              <h3>Noise pushes ADC outputs off the ideal line.</h3>
+              <p>Currents beyond ±I<sub>clip</sub> collapse onto the rails, and the remaining noise scatters samples around the ideal line. Compute SNR compares the signal power with the total power of the four noise terms.</p>
+              <figure class="equation">
+                <math display="block"><mtext>SNR</mtext><mo>=</mo><mfrac><mrow><mi mathvariant="normal">E</mi><mo stretchy="false">[</mo><msubsup><mi>I</mi><mtext>sig</mtext><mn>2</mn></msubsup><mo stretchy="false">]</mo></mrow><mrow><mi mathvariant="normal">E</mi><mo stretchy="false">[</mo><msubsup><mi>I</mi><mtext>nb</mtext><mn>2</mn></msubsup><mo stretchy="false">]</mo><mo>+</mo><mi mathvariant="normal">E</mi><mo stretchy="false">[</mo><msubsup><mi>I</mi><mtext>nd</mtext><mn>2</mn></msubsup><mo stretchy="false">]</mo><mo>+</mo><mi mathvariant="normal">E</mi><mo stretchy="false">[</mo><msubsup><mi>I</mi><mtext>nc</mtext><mn>2</mn></msubsup><mo stretchy="false">]</mo><mo>+</mo><mi mathvariant="normal">E</mi><mo stretchy="false">[</mo><msubsup><mi>I</mi><mtext>nq</mtext><mn>2</mn></msubsup><mo stretchy="false">]</mo></mrow></mfrac></math>
+                <figcaption>Compute SNR at the SL. Eq. (5) of the paper.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tint">
+        <div class="container content-split align-start">
+          <div class="content-copy">
+            <p class="section-kicker red">Model boundary</p>
+            <h2>The limits hold under stated assumptions.</h2>
+            <p>The reported limits are conditional on these assumptions and the evaluation parameters.</p>
+          </div>
+          <ul class="detail-list"><li><div><strong>Binary devices.</strong> Each device takes only the states R<sub>on</sub> and R<sub>off</sub>.</div></li><li><div><strong>Sensing.</strong> R<sub>s</sub> equals the TIA input impedance.</div></li><li><div><strong>Circuit check.</strong> The behavioral models were validated against 22 nm SPICE simulation.</div></li><li><div><strong>Parasitics.</strong> The paper's equation omits wire parasitics. The <a class="text-link" href="architect.html">Architect</a> adds them with a full network model.</div></li></ul>
+        </div>
+      </section>
     </main>
-    <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><p>The physical signal path behind the crossbar accuracy model.</p><a class="footer-link" href="optimum.html">Continue to SNR optimum →</a></div></footer>
+    <footer class="site-footer"><div class="container footer-inner"><a class="brand" href="index.html"><span class="architecture-icon crossbar-icon brand-architecture-icon" aria-hidden="true"><i></i><i></i><i></i><b></b><b></b><b></b><em></em></span><span><strong>Crossbar IMC</strong><small>Maximizing compute SNR</small></span></a><p>The physical signal path behind the crossbar accuracy model.</p><div class="footer-links"><a href="https://doi.org/10.1109/ISCAS48785.2022.9937336">ISCAS 2022 paper <span aria-hidden="true">↗</span></a><a href="https://github.com/calmyor/Crossbar-analysis">Repository <span aria-hidden="true">↗</span></a><a class="footer-link" href="optimum.html">Continue to SNR optimum →</a></div><p class="footer-note">© 2026 The authors. Figures are adapted from the ISCAS 2022 paper for this research artifact.</p></div></footer>
   </body>
 </html>

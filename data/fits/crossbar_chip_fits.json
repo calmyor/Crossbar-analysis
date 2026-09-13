@@ -1,0 +1,207 @@
+{
+  "rows_simulated": 64,
+  "chips": [
+    {
+      "chip": "NeuRRAM, 48-core RRAM CIM chip (130 nm)",
+      "source": "W. Wan et al., Nature 608, 504-512 (2022)",
+      "noise_curve": "ResNet-20 / CIFAR-10, trained with 20% weight noise (best model)",
+      "free_parameter": "r_input_rail_ohm",
+      "fitted_value": 2.4841,
+      "fit": {
+        "observation": "ResNet-20 / CIFAR-10 measured before fine-tuning",
+        "compensation": "calibrated",
+        "compute_snr_db": 13.62,
+        "analog_snr_db": 13.62,
+        "raw_snr_db": 5.95,
+        "mean_gain": 0.508,
+        "reported_accuracy": 83.67,
+        "predicted_accuracy": 83.68,
+        "error": 0.01,
+        "equivalent_weight_noise": 0.1204,
+        "extrapolated_curve": false
+      },
+      "checks": [
+        {
+          "observation": "CIFAR-10 after chip-in-the-loop fine-tuning (+1.99 pt)",
+          "compensation": "chip_in_loop",
+          "compute_snr_db": 18.34,
+          "analog_snr_db": 18.37,
+          "raw_snr_db": 5.95,
+          "mean_gain": 0.508,
+          "reported_accuracy": 85.66,
+          "predicted_accuracy": 84.8,
+          "error": -0.86,
+          "equivalent_weight_noise": 0.0699,
+          "extrapolated_curve": false
+        }
+      ],
+      "assumptions": [
+        "256 x 256 core modeled as N = 128 differential weights per output.",
+        "Programming error set by the 10% weight noise used in training (3.87 uS worst-case relaxation at 40 uS).",
+        "I-V nonlinearity of 5% at the full read voltage is assumed, not reported.",
+        "Accuracy read directly from the chip team's ResNet-20 noise curve, without rescaling.",
+        "Input IR drop during multi-core operation is lumped into a shared read-voltage rail with four cores in parallel; the rail resistance is the fitted parameter.",
+        "Chip-in-the-loop compensation in the model absorbs all static error, so the check is an upper bound."
+      ],
+      "config": {
+        "dot_product_dimension": 128,
+        "active_rows": 64,
+        "input_bits": 4,
+        "adc_bits": 8,
+        "v_lsb_volt": 0.0625,
+        "weight_distribution": "uniform",
+        "conductance_variation_ratio": 0.0,
+        "programming_sigma_ratio": 0.06894291116568839,
+        "input_encoding": "voltage",
+        "dac_mismatch_ratio": 0.0,
+        "dac_inl_lsb": 0.0,
+        "dac_compression": 0.0,
+        "iv_nonlinearity": 0.05,
+        "r_bl_ohm": 0.33781512605042,
+        "r_sl_ohm": 0.33781512605042,
+        "r_driver_ohm": 0.0,
+        "r_access_ohm": 0.0,
+        "r_sense_ohm": 1000.0,
+        "r_input_rail_ohm": 2.484144524039357,
+        "parallel_cores": 4,
+        "sensing": "voltage",
+        "weight_trials": 1,
+        "input_samples": 0,
+        "seed": 2022
+      }
+    },
+    {
+      "chip": "IBM HERMES 64-core PCM AIMC chip (14 nm)",
+      "source": "M. Le Gallo et al., Nature Electronics 6, 680-693 (2023)",
+      "noise_curve": "ResNet-32 / CIFAR-10, training noise matched to inference noise",
+      "free_parameter": "wire_scale",
+      "fitted_value": 0.3309,
+      "fit": {
+        "observation": "ResNet-9 / CIFAR-10 with two devices per polarity (TDP)",
+        "compensation": "calibrated",
+        "compute_snr_db": 18.75,
+        "analog_snr_db": 18.75,
+        "raw_snr_db": 14.58,
+        "mean_gain": 0.841,
+        "reported_accuracy": 92.81,
+        "predicted_accuracy": 92.81,
+        "error": -0.0,
+        "equivalent_weight_noise": 0.0666,
+        "extrapolated_curve": false
+      },
+      "checks": [
+        {
+          "observation": "ResNet-9 / CIFAR-10 with one device per polarity (ODP)",
+          "compensation": "calibrated",
+          "compute_snr_db": 17.77,
+          "analog_snr_db": 17.77,
+          "raw_snr_db": 14.02,
+          "mean_gain": 0.833,
+          "reported_accuracy": 92.23,
+          "predicted_accuracy": 92.59,
+          "error": 0.36,
+          "equivalent_weight_noise": 0.0746,
+          "extrapolated_curve": false
+        }
+      ],
+      "assumptions": [
+        "Unit cell of four PCM devices modeled as a differential pair on half-cell pitch.",
+        "PCM programming plus read noise of 3.8% of Gmax (Joshi et al. 2020); TDP lowers it by sqrt(2).",
+        "Pulse-width inputs remove amplitude DAC error; ADC gain and offset are calibrated per row.",
+        "Wire resistance is the fitted parameter, as a multiple of 14 nm minimum-width metal."
+      ],
+      "config": {
+        "dot_product_dimension": 256,
+        "active_rows": 64,
+        "input_bits": 8,
+        "adc_bits": 12,
+        "v_lsb_volt": 0.0015625,
+        "weight_distribution": "uniform",
+        "conductance_variation_ratio": 0.0,
+        "programming_sigma_ratio": 0.026870057685088804,
+        "input_encoding": "pwm",
+        "dac_mismatch_ratio": 0.0,
+        "dac_inl_lsb": 0.0,
+        "dac_compression": 0.0,
+        "iv_nonlinearity": 0.05,
+        "r_bl_ohm": 0.4176350248526525,
+        "r_sl_ohm": 0.4176350248526525,
+        "r_driver_ohm": 0.0,
+        "r_access_ohm": 0.0,
+        "r_sense_ohm": 100.0,
+        "r_input_rail_ohm": 0.0,
+        "parallel_cores": 1,
+        "sensing": "current",
+        "weight_trials": 1,
+        "input_samples": 0,
+        "seed": 2022
+      }
+    },
+    {
+      "chip": "HP Labs dot-product engine, 128 x 64 1T1R (no fitted parameter)",
+      "source": "M. Hu et al., Advanced Materials 30, 1705914 (2018); C. Li et al., Nature Electronics 1, 52-59 (2018)",
+      "noise_curve": null,
+      "free_parameter": null,
+      "fitted_value": null,
+      "fit": null,
+      "checks": [
+        {
+          "observation": "Vector-matrix multiplication with the DPE conversion algorithm (design-aware)",
+          "compensation": "ir_aware",
+          "compute_snr_db": 34.95,
+          "analog_snr_db": 34.95,
+          "raw_snr_db": 6.67,
+          "mean_gain": 0.555,
+          "reported_bits": 6.0,
+          "predicted_bits": 5.51,
+          "error": -0.49
+        },
+        {
+          "observation": "Same array with linear output correction only",
+          "compensation": "calibrated",
+          "compute_snr_db": 15.61,
+          "analog_snr_db": 15.61,
+          "raw_snr_db": 6.67,
+          "mean_gain": 0.555,
+          "reported_bits": 6.0,
+          "predicted_bits": 2.3,
+          "error": -3.7
+        }
+      ],
+      "assumptions": [
+        "128 x 64 array modeled as 64 rows of 32 differential weights (128 physical columns).",
+        "Conductance 100-900 uS and write error sigma 6 uS from the sister Li et al. (2018) paper on the same array.",
+        "Wire segment resistance of 1 ohm, as calibrated against the array by Zhang and Hu (arXiv 1912.08716).",
+        "Instrument-grade DAC and ADC; I-V nonlinearity of 1% at the 0.2 V read bias is assumed.",
+        "Precision in bits is (SNR - 1.76) / 6.02; the paper reports an accuracy equivalent of 6 bits.",
+        "No MNIST noise-tolerance curve exists for this network, so only precision is checked."
+      ],
+      "config": {
+        "dot_product_dimension": 32,
+        "active_rows": 64,
+        "input_bits": 8,
+        "adc_bits": 12,
+        "v_lsb_volt": 0.0015625,
+        "weight_distribution": "uniform",
+        "conductance_variation_ratio": 0.0,
+        "programming_sigma_ratio": 0.006666666666666667,
+        "input_encoding": "voltage",
+        "dac_mismatch_ratio": 0.0,
+        "dac_inl_lsb": 0.0,
+        "dac_compression": 0.0,
+        "iv_nonlinearity": 0.01,
+        "r_bl_ohm": 1.0,
+        "r_sl_ohm": 1.0,
+        "r_driver_ohm": 0.0,
+        "r_access_ohm": 0.0,
+        "r_sense_ohm": 10.0,
+        "r_input_rail_ohm": 0.0,
+        "parallel_cores": 1,
+        "sensing": "current",
+        "weight_trials": 1,
+        "input_samples": 0,
+        "seed": 2022
+      }
+    }
+  ]
+}
