@@ -29,8 +29,6 @@ paper/                    Publication links and scope notes
 tests/                    Deterministic model and CLI checks
 ```
 
-The original 1.1 GB working directory is intentionally excluded from Git. It remains available locally under `ISCAS-2022/`, `Python Model/`, and `Conference-LaTeX-template_10-17-19/`, but includes duplicate drafts, third-party papers, incomplete older experiments, and activation tensors that exceed GitHub’s file limit.
-
 ## Quick start
 
 Python 3.9 or newer is required.

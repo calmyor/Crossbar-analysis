@@ -5,4 +5,4 @@
 - [DOI record](https://doi.org/10.1109/ISCAS48785.2022.9937336)
 - [Author-hosted PDF](https://shanbhag.ece.illinois.edu/publications/ISCAS-2022-Crossbar-Limits.pdf)
 
-The repository does not redistribute the commercial process design kit or third-party papers from the original working directory.
+The repository does not redistribute the commercial process design kit.
